@@ -1,7 +1,7 @@
 import smbus
 from math import atan, sqrt
 
-# Conversion methods
+# Conversion functions
 def magnitude(real, img):
     return sqrt(real*real + img*img)
 
