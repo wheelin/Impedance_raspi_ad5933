@@ -8,6 +8,12 @@ def magnitude(real, img):
 def phase(real, img):
     return atan(img/real)
 
+def set_bit(n, reg):
+	return reg | (1 << n)
+
+def clear_bit(n, reg):
+	return reg & (0xFF & 0 << n)
+
 CONTROL_REG0 = 0x80
 CONTROL_REG1 = 0x81
 
@@ -96,10 +102,25 @@ class AD5933:
         return True
 
     def set_PGA_gain(self, gain=1):
-
-    def set_clk_source(self, src):
+    	control_reg_value1 = control_reg_value1 | 1
+    	self.write_reg(CONTROL_REG1, control_reg_value1)
 
     def set_ex_voltage(self, voltage=2):
+    	if voltage == 4:
+    		self.control_reg_value0 = set_bit(3, self.control_reg_value0)
+    		self.control_reg_value0 = clear_bit(4, self.control_reg_value0)
+    	elif voltage == 3:
+    		self.control_reg_value0 = set_bit(4, self.control_reg_value0)
+    		self.control_reg_value0 = clear_bit(3, self.control_reg_value0)
+    	elif voltage == 2:
+    		self.control_reg_value0 = set_bit(3, self.control_reg_value0)
+    		self.control_reg_value0 = set_bit(4, self.control_reg_value0)
+    	elif voltage == 1:
+    		self.control_reg_value0 = clear_bit(3, self.control_reg_value0)
+    		self.control_reg_value0 = clear_bit(4, self.control_reg_value0)
+
+    	write_reg(CONTROL_REG0, self.control_reg_value0)
+
 
     def start_freq_sweep(self):
 
