@@ -77,9 +77,8 @@ class AD5933:
     def set_freq_range(self, min, max, inc):
         if min <= 1000 or min >= max or min > 100e3:
             return -1
-        else:
-            min_code = hex((min/(self.clk/4))*2^27)
-        max_code = hex((max/(self.clk/4))*2^27)
+        min_code = hex((min/(self.clk/4))*pow(2, 27))
+        max_code = hex((max/(self.clk/4))*pow(2, 27))
 
 
 
