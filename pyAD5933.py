@@ -76,13 +76,24 @@ class AD5933:
     # Methods to edit control register
     def set_freq_range(self, min, max, inc):
         if min <= 1000 or min >= max or min > 100e3:
-            return -1
+            return False
         min_code = hex((min/(self.clk/4))*pow(2, 27))
         max_code = hex((max/(self.clk/4))*pow(2, 27))
+        inc_code = hex((inc/(self.clk/4))*pow(2, 27))
 
+        self.write_reg(FREQ_MIN_REG2, (min_code >> 16) & 0x00FF)
+        self.write_reg(FREQ_MIN_REG1, (min_code >> 8 ) & 0x00FF)
+        self.write_reg(FREQ_MIN_REG0, min_code & 0x00FF)
 
+        self.write_reg(FREQ_MAX_REG2, (max_code >> 16) & 0x00FF)
+        self.write_reg(FREQ_MAX_REG2, (max_code >> 8 ) & 0x00FF)
+        self.write_reg(FREQ_MAX_REG2, max_code & 0x00FF)
 
+        self.write_reg(FREQ_INC_REG2, (inc_code >> 16) & 0x00FF)
+        self.write_reg(FREQ_INC_REG1, (inc_code >> 8 ) & 0x00FF)
+        self.write_reg(FREQ_INC_REG1, inc_code & 0x00FF)
 
+        return True
 
     def set_PGA_gain(self, gain=1):
 
