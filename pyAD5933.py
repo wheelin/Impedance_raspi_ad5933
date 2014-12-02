@@ -106,56 +106,76 @@ class AD5933:
     	self.write_reg(CONTROL_REG1, control_reg_value1)
 
     def set_ex_voltage(self, voltage=2):
-    	if voltage == 4:
+    	if voltage == 4:			# for 200mV
     		self.control_reg_value0 = set_bit(3, self.control_reg_value0)
     		self.control_reg_value0 = clear_bit(4, self.control_reg_value0)
-    	elif voltage == 3:
+    	elif voltage == 3:			# for 400mV
     		self.control_reg_value0 = set_bit(4, self.control_reg_value0)
     		self.control_reg_value0 = clear_bit(3, self.control_reg_value0)
-    	elif voltage == 2:
+    	elif voltage == 2:			# for 2V
     		self.control_reg_value0 = set_bit(3, self.control_reg_value0)
     		self.control_reg_value0 = set_bit(4, self.control_reg_value0)
-    	elif voltage == 1:
+    	elif voltage == 1:			# for 1V
     		self.control_reg_value0 = clear_bit(3, self.control_reg_value0)
     		self.control_reg_value0 = clear_bit(4, self.control_reg_value0)
+    	write_reg(CONTROL_REG0, self.control_reg_value0)
 
+    def init_start_freq(self):
+    	self.control_reg_value0 = clear_bit(15, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(14, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(13, self.control_reg_value0)
+    	self.control_reg_value0 = set_bit(12, self.control_reg_value0)
+    	write_reg(CONTROL_REG0, self.control_reg_value0)
+
+    def start_freq_sweep(self):
+    	self.control_reg_value0 = clear_bit(15, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(14, self.control_reg_value0)
+    	self.control_reg_value0 = set_bit(13, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(12, self.control_reg_value0)
     	write_reg(CONTROL_REG0, self.control_reg_value0)
 
 
-    def start_freq_sweep(self):
-
     def repeat_freq(self):
+    	self.control_reg_value0 = clear_bit(15, self.control_reg_value0)
+    	self.control_reg_value0 = set_bit(14, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(13, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(12, self.control_reg_value0)
+    	write_reg(CONTROL_REG0, self.control_reg_value0)
 
     def incr_freq(self):
-
+    	self.control_reg_value0 = clear_bit(15, self.control_reg_value0)
+    	self.control_reg_value0 = clear_bit(14, self.control_reg_value0)
+    	self.control_reg_value0 = set_bit(13, self.control_reg_value0)
+    	self.control_reg_value0 = set_bit(12, self.control_reg_value0)
+    	write_reg(CONTROL_REG0, self.control_reg_value0)
 
     def reset(self):
         self.control_reg_value1 = (1 << 4) | self.control_reg_value1
         self.write_reg(CONTROL_REG1, self.control_reg_value1)
 
-    def standby(self):
+    def put_in_standby(self):
         self.control_reg_value0 = ((0x0B << 4) | 0x0F) & self.control_reg_value0
         self.write_reg(CONTROL_REG0, self.control_reg_value0)
 
-    def power_down(self):
+    def put_in_power_down(self):
         self.control_reg_value0 = ((0x0A << 4) | 0x0F) & self.control_reg_value0
         self.write_reg(CONTROL_REG0, self.control_reg_value0)
 
-    def meas_imp_complete(self):
+    def is_meas_imp_complete(self):
         status = self.read_reg(STATUS_REG)
         if (status & 0x01) == 1:
             return True
         else:
             return False
 
-    def meas_temp_complete(self):
+    def is_meas_temp_complete(self):
         status = self.read_reg(STATUS_REG)
         if (status & 0x02) == 2:
             return True
         else:
             return False
 
-    def sweep_complete(self):
+    def is_sweep_complete(self):
         status = self.read_reg(STATUS_REG)
         if (status & 0x04) == 4:
             return True
