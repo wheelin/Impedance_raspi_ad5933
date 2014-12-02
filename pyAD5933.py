@@ -1,5 +1,6 @@
 import smbus
 from math import atan, sqrt
+from time import sleep
 
 # Conversion functions
 def magnitude(real, img):
@@ -60,14 +61,16 @@ class AD5933:
 
         if clk_source == "int":
             self.int_clk = True
-
         else:
             self.int_clk = False
-
         self.clk = clk
 
     # Measurement methodes
     def make_imp_measure(self):
+    	set_freq_range(1000, 1000000, 500)
+    	put_in_standby()
+    	init_start_freq()
+
 
     def make_temp_measure(self):
 
@@ -119,6 +122,23 @@ class AD5933:
     		self.control_reg_value0 = clear_bit(3, self.control_reg_value0)
     		self.control_reg_value0 = clear_bit(4, self.control_reg_value0)
     	write_reg(CONTROL_REG0, self.control_reg_value0)
+
+    def set_settling_time(self, cy_num, factor):
+    	if cy_num > 511 or cy_num < 0 or factor != 2 or factor != 4:
+    		return False
+    	if factor == 2:
+    		if cy_num >= 256:
+    			write_reg(STTL_TIME_CY_NUM_REG0, 0b00000011)
+    		else:
+    			write_reg(STTL_TIME_CY_NUM_REG0, 0b00000010)
+    		write_reg(STTL_TIME_CY_NUM_REG1, cy_num / 2) 
+    	elif factor == 4:
+    		if cy_num >= 256:
+    			write_reg(STTL_TIME_CY_NUM_REG0, 0b00000111)
+    		else:
+    			write_reg(STTL_TIME_CY_NUM_REG0, 0b00000110)
+    		write_reg(STTL_TIME_CY_NUM_REG1, cy_num / 2) 
+
 
     def init_start_freq(self):
     	self.control_reg_value0 = clear_bit(15, self.control_reg_value0)
