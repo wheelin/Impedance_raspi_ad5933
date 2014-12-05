@@ -5,3 +5,6 @@ class Measure:
 		#Initialize the AD5933 device
 		self.device = AD5933("int")
 		#Initialize place to manage measure array
+		self.real = []
+		self.img = []
+		
