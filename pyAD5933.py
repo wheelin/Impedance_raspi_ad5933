@@ -22,7 +22,7 @@ def set_bit(n, reg):
 	return reg | (1 << n)
 
 def clear_bit(n, reg):
-	return reg & (0xFF & 0 << n)
+	return reg & ~(1 << n)
 
 # List of all the registers
 CONTROL_REG0 = 			0x80
@@ -83,7 +83,7 @@ class AD5933:
         self.control_reg_value1 = 0x00
         self.clk = clk
         self.set_clock(self.clk)
-    
+
     def calibrate(self):
 
 
@@ -142,7 +142,7 @@ class AD5933:
     def set_freq_range(self, min=1e3, inc=500, freq_inc=198):
     	"""
         Set the frequency sweep parameters
-        
+
         Keyword arguments:
         min -- start frequency
         inc -- number of incrments
